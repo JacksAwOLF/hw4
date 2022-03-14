@@ -23,4 +23,4 @@ V3 Color::calculate(V3 point) {
     
 
     return res;
-}
+}¥
