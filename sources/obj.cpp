@@ -7,6 +7,14 @@ Obj::Obj(ShadingVars svars, Transform tf){
     transform = tf;
 }
 
+float Obj::intersectWithRay(Ray r){
+    return -1;
+}
+
+Arr3 Obj::surfaceNormal(Arr3 point){
+    return Arr3();
+}
+
 Triangle::Triangle(istream& in, vector<Arr3>& vertices, 
     ShadingVars svars, Transform tf): Obj(svars, tf){
     

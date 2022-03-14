@@ -4,7 +4,7 @@ OBJ = objfiles
 HEAD = headers
 
 CC = g++
-CFLAGS = -std=c++11
+CFLAGS = -std=c++11 -Wall
 INCFLAGS = -I $(HEAD)
 LDFLAGS =
 

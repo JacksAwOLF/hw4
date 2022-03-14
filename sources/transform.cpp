@@ -49,7 +49,7 @@ Transform Transform::inScale(istream& in){
     return Transform(mat, inv);
 }
 
-Transform inTranslate(istream& in){
+Transform Transform::inTranslate(istream& in){
     Arr3 delta(in);
     float mat[16] = {
         1.0, 0.0, 0.0, delta[0],

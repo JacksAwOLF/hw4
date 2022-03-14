@@ -3,9 +3,12 @@
 #include <sstream>
 #include <vector>
 #include "Scene.h"
-#include "readfile.cpp"
-#include "ppm.cpp"
+// #include "readfile.cpp"
+// #include "ppm.cpp"
 using namespace std;
+
+Scene readfile(const char* filename, int whichCam=1);
+bool ppmFromScene(const char* filename, Scene scene);
 
 int main(int argc, char* argv[]){
 
