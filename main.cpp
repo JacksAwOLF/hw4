@@ -23,6 +23,9 @@ int main(int argc, char* argv[]){
     }
 
     Scene scene = readfile(argv[1], whichCam);
+
+    cout<<"scene shit: "<<scene.screenTopLeft<<endl;
+
     scene.render();
 
     if (!ppmFromScene(argc>=3 ? argv[2] : "test.ppm", scene)){
