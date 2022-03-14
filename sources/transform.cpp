@@ -100,7 +100,7 @@ Transform Transform::rotate(V3 normal, float angle){
         0.0, normal.z, -normal.y, 0.0,
         -normal.z, 0.0, normal.x, 0.0,
         normal.y, -normal.x, 0.0, 0.0,
-        0.0, 0.0, 0.0, 1.0
+        0.0, 0.0, 0.0, 0.0
     };
 
     Transform T2(t2), TT2(t2);
