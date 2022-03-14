@@ -2,6 +2,10 @@
 
 // constructors
 
+Arr::Arr(){}
+Arr3::Arr3(): Arr(3) {}
+Arr4::Arr4(): Arr(4) {}
+
 Arr::Arr(int size){
     for (int i=0; i<size; i++)
         data.push_back(0);
@@ -14,9 +18,36 @@ Arr::Arr(int size, istream& in){
     }
 }
 
-// is this right?
-Arr3::Arr3(): Arr(3) {}
-Arr4::Arr4(): Arr(4) {}
+Arr3::Arr3(Arr arr){
+    for (int i=0; i<3; i++)
+        data.push_back(arr[i]);
+}
+
+Arr4::Arr4(Arr arr){
+    for (int i=0; i<4; i++)
+        data.push_back(arr[i]);
+}
+
+Arr3::Arr3(istream& is): Arr(3, is){}
+Arr4::Arr4(istream& is): Arr(4, is){}
+
+Arr3::Arr3(float a, float b, float c){
+    data.push_back(a);
+    data.push_back(b);
+    data.push_back(c);
+}
+
+Arr4::Arr4(float a, float b, float c, float d){
+    data.push_back(a);
+    data.push_back(b);
+    data.push_back(c);
+    data.push_back(d);
+}
+Arr4::Arr4(Arr3 arr, float x){
+    for (int i=0; i<arr.size(); i++)
+        data.push_back(arr[i]);
+    data.push_back(x);
+}
 
 // common helping functions
 
@@ -39,7 +70,15 @@ void Arr::checkSize(Arr& o){
 }
 
 Arr Arr::normalize(){
-    return this / length;
+    return *this / length();
+}
+
+Arr4 Arr4::dehomogenize(){
+    if (data[3] == 0){
+        cerr<<"Cannot dehomogenize when w is 0\n";
+        return nullptr;
+    }
+    return *this / data[3];
 }
 
 float Arr::operator[](int i) const {
@@ -93,11 +132,7 @@ float Arr::operator*(Arr &o){
     return res;
 }
 
-Arr Arr::cross(Arr o){
-    if (size() != 3 || o.size() != 3){
-        // TODO: exception
-        cerr<<"can't cross product with non size3"<<endl;
-    }
+Arr3 Arr3::cross(Arr3 o){
     return Arr3(
         data[1]*o[2] - data[2]*o[1],
         data[2]*o[0] - data[0]*o[2],
@@ -134,31 +169,19 @@ ostream& operator<<(ostream& os, Arr4& arr){
     return os << (Arr&) arr;
 }
 
-Arr3::Arr3(istream& is): Arr(3, is){}
-Arr3::Arr3(float a, float b, float c){
-    data.push_back(a);
-    data.push_back(b);
-    data.push_back(c);
-}
-
-Arr4::Arr4(istream& is): Arr(4, is){}
-Arr4::Arr4(float a, float b, float c, float d){
-    data.push_back(a);
-    data.push_back(b);
-    data.push_back(c);
-    data.push_back(d);
-}
-Arr4::Arr4(Arr3 arr, float x){
-    for (int i=0; i<arr.size(); i++)
-        data.push_back(arr[i]);
-    data.push_back(x);
-}
-
-int main(){
-    Arr3 a(cin);
-    Arr3 b(1, 2, 3);
-    cout<<"a is "<<a*2<<endl;
-    cout<<"b is "<<b<<endl;
-    cout<<"a*b is "<<((a * 2).cross(b))<<endl;
-    return 0;
-}
+// int main(){
+//     Arr aa(2);
+//     aa[0] = 2; aa[1] = 1;
+//     Arr bb(2);
+//     bb[0] = 9; bb[1] = 11;
+//     Arr3 a(2, 3, 1);
+//     Arr3 b(1, 2, 3);
+//     Arr3 c = a + b;
+//     float cc = aa * bb;
+//     cout<<"a is "<<a.normalize()<<endl;
+//     cout<<"b is "<<b<<endl;
+//     cout<<"c is "<<c<<endl;
+//     cout<<"cc "<<cc<<endl;
+//     cout<<"a cross b is "<<(((Arr3)(a * 2)).cross(b))<<endl;
+//     return 0;
+// }

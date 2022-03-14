@@ -19,7 +19,7 @@ public:
     int size() const;
 
     // length of the vector
-    int length();
+    float length();
 
     // change this vector to length 1
     Arr normalize();
@@ -35,7 +35,7 @@ public:
     // Arr operator-=(const Arr&);
 
     float operator*(Arr&);
-    Arr cross(Arr);
+    // Arr cross(Arr);
 
     Arr operator*(const float&);
     Arr operator/(const float&);
@@ -47,9 +47,10 @@ ostream& operator<<(ostream&, const Arr&);
 class Arr3: public Arr{
 public:
     Arr3();
+    Arr3(Arr);
     Arr3(istream&);
     Arr3(float, float, float);
-    // TODO: Arr3 cross(Arr3);
+    Arr3 cross(Arr3);
 };
 
 istream& operator>>(istream&, Arr3&);
@@ -58,9 +59,11 @@ ostream& operator<<(ostream&, const Arr3&);
 class Arr4: public Arr{
 public:
     Arr4();
+    Arr4(Arr);
     Arr4(istream&);
     Arr4(Arr3, float);
     Arr4(float, float, float, float);
+    Arr4 dehomogenize();
 };
 
 istream& operator>>(istream&, Arr4&);
