@@ -1,51 +1,64 @@
-#include "scene.h"
+#include "Scene.h"
 
-Ray::Ray(V3 from, V3 to){
-    a = from;
-    b = to - from;
+Scene::Scene(){
+    maxdepth = 5;
+    outfile = "test.ppm";
+    attenuation = Arr3(1, 0, 0);
 }
 
-V3 Ray::getPoint(float t){
-    return a + b * t;
+void Scene::setImage(istream& in){
+    in >> imageW >> imageH;
 }
 
-void Scene::setCamera(istream& in) {
-    in >> eye >> at >> up >> foy;
-    dis = (at - eye);
-    
-    // hor = V3::normalize(up.cross(dis));
-    hor = V3::normalize(dis.cross(up));
-
-    ver = V3::normalize(dis.cross(hor));
-    // ver = V3::normalize(hor.cross(dis));
+void Scene::setCamera(istream& in){
+    cam = Camera(in);
+    pixelSize = cam.calculatePixelSize(imageW, imageH);
+    screenTopLeft = cam.at 
+        - pixelSize.pixelW * imageW / 2
+        - pixelSize.pixelH * imageH / 2;
 }
-void Scene::setScreen(istream& in) { in >> w >> h; }
 
-vector<Ray> Scene::getRays() {
-    vector<Ray> res;
+void Scene::addLight(istream& in, bool dir){
+    lights.push_back(Light(in, dir, attenuation));
+}
 
-    float theta = (foy/2) * 3.1415926535 / 180.0,
-        screenH = sin(theta) / cos(theta) * dis.length() * 2,
-        screenW = screenH * (w/h);
-    V3  pixelH = ver * (screenH / h),
-        pixelW = hor * (screenW / w),
-        pixelMid = pixelH/2.0 + pixelW/2.0,
-        botRight = at - (ver * screenH/2) - (hor * screenH/2 * (w/h)),
-        curPos;
-
-    cout<<"screen calc:\ntheta: "<<theta<<" screenH/W: "<<screenH<<" "<<screenW<<endl;
-    cout<<"botR: "<<botRight<<" pixelW: "<<pixelW<<" pixelH: "<<pixelH<<endl;
-    cout<<"camera: "<<eye<<" at: "<<at<<" dis: "<<dis<<" hor: "<<hor<<" ver: "<<ver<<endl;
-
-    for (int i=0; i<h; i++) {
-        curPos = botRight + pixelH * i;
-        for (int j=0; j<w; j++) {
-            V3 rr = curPos + pixelMid;
-            // cout<<"rr: "<<rr<<endl;
-            res.push_back(Ray(eye, rr));
-            curPos = curPos + pixelW;
+Intersection Scene::firstObjHit(Ray ray){
+    // don't count 0s, better for shadow rays
+    float t = 0;
+    Obj *obj = nullptr;
+    for (int i=0; i<objs.size(); i++){
+        float tt = objs[i]->intersectWithRay(ray);
+        if (tt > 0 && (t == 0 || tt < t)){
+            t = tt;
+            obj = objs[i];
         }
     }
+    
+    return Intersection(obj, ray.at(t));
+}
 
-    return res;
+void Scene::render(){
+    Arr3 curPos;
+    for (int i=0; i<imageH; i++){
+        curPos = screenTopLeft + pixelSize.pixelH * i;
+        for (int j=0; j<imageW; j++){
+            
+            // construct ray that goes through this pixel
+            Ray ray(cam.eye, curPos);
+            curPos = curPos + pixelSize.pixelW;
+
+            // find first obj this ray hits
+            Intersection hit = firstObjHit(ray);
+            if (hit.obj != nullptr) {
+
+                // color with each light source if needed
+                for (Light light : lights){
+                    Ray ltRay(hit.pos, light.position);
+                    if (firstObjHit(ltRay).obj == nullptr) {
+                        image[i][j] = image[i][j] + light.shade(hit, cam.eye);
+                    }
+                }
+            }
+        }
+    }
 }

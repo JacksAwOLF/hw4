@@ -1,44 +1,50 @@
 #ifndef OBJ_H
 #define OBJ_H
 
-#include "v3.h"
-#include "scene.h"
-#include "color.h"
-#include "transform.h"
-#include <math.h>
-#include <string>
+#include "Arr.h"
+#include "ShadingVars.h"
+#include "Transform.h"
+#include "Ray.h"
+#include <cmath>
 
-class VirtualObj {
+class Obj {
 public:
-    Color color;
+    ShadingVars shadingVars;
     Transform transform;
 
-    VirtualObj() {}
-    virtual string getName();
+    Obj(ShadingVars svars, Transform tf);
 
     // returns t, where if positive, means that the Ray first intersects
     // this object at ray.a + ray.b * t
     virtual float intersectWithRay(Ray);
+
+    // returns surface normal at point of intersection
+    virtual Arr3 surfaceNormal(Arr3 pointOfInt);
 };
 
-class Triangle: public VirtualObj {
+class Triangle: public Obj {
 private:
-    V3 a, b, c;
-    V3 aa, bb, n; // n is normal, aa bb is for n calculation
+    Arr3 a, b, c;
+
+    // aa.cross(bb) = normal vector to plane
+    Arr3 aa, bb, n; 
+    // TODO: could save more vars here in intersection calculation
+
 public:
-    Triangle(istream&, vector<V3>&, Color, Transform);
-    string getName();
+    Triangle(istream&, vector<Arr3>&, ShadingVars, Transform);
+    
     float intersectWithRay(Ray);
+    Arr3 surfaceNormal(Arr3 pointOfInt);
 };
 
-class Sphere: public VirtualObj {
+class Sphere: public Obj {
 private:
-    V3 center;
-    float r;
+    Arr3 center;
+    float radius;
 public:
-    Sphere(istream&, Color, Transform);
-    string getName();
+    Sphere(istream&, ShadingVars, Transform);
     float intersectWithRay(Ray);
+    Arr3 surfaceNormal(Arr3 pointOfInt);
 };
 
 #endif
