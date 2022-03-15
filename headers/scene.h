@@ -14,6 +14,8 @@
 
 class Scene{
 public:
+    bool debug;
+    
     int imageW, imageH;
     int maxdepth;
     Camera cam;

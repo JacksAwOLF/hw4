@@ -17,13 +17,18 @@ Transform::Transform(Mat4 mat, Mat4 inv){
     inverse = inv;
 }
 
-// multiply with self function
+// multiply functions
 
 Transform Transform::operator*(const Transform &o){
     return Transform(
         matrix * o.matrix,
         inverse * o.inverse
     );
+}
+
+Arr3 Transform::multNormal(const Arr3& normalVec){
+    // inverse transpose, in that order
+    return inverse.transpose() * Arr4(normalVec, 1);
 }
 
 // static transformations (and their inverses)
@@ -66,12 +71,31 @@ Transform Transform::inTranslate(istream& in){
     return Transform(mat, inv);
 }
 
-// TODO!!!
-// Transform Transform::inRotate(istream& in){
-//     Arr3 normal(in);
-//     float angle; in >> angle;
-//     // Arr3 n = normal.normalize();
-//     angle = angle * 3.1415926535 / 180.0;
+// TODO: understand this better
+Transform Transform::inRotate(istream& in){
+    Arr3 normal(in);
+    float angle; in >> angle;
 
+    normal = normal.normalize();
+    angle = angle * 3.1415926535 / 180.0;
 
-// }
+    float t2[16] = {
+        0.0, normal[2], -normal[1], 0.0,
+        -normal[2], 0.0, normal[0], 0.0,
+        normal[1], -normal[0], 0.0, 0.0,
+        0.0, 0.0, 0.0, 1.0
+    };
+
+    Mat4 T2(t2), TT2;
+    TT2 = T2 * T2;
+    Mat4 res = Mat4::identity() + 
+        T2 * sin(angle) + TT2 * (1-cos(angle));
+    
+    // make sure the last col / row is 0001
+    for (int i=0; i<4; i++) {
+        res.data[3][i] = (i+1)/4;
+        res.data[i][3] = (i+1)/4;
+    }
+
+    return Transform(res.transpose(), res);
+}

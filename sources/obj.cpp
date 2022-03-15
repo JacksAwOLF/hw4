@@ -5,6 +5,7 @@
 Obj::Obj(ShadingVars svars, Transform tf){
     shadingVars = svars;
     transform = tf;
+    debug = false;
     // cout<<"new obj with transform\n"<<tf.matrix<<" and inverse "<<tf.inverse<<endl;
 }
 
@@ -32,6 +33,7 @@ Triangle::Triangle(istream& in, vector<Arr3>& vertices,
 
     // cout<<"triangle "<<a<<" , "<<b<<" , "<<c<<endl;
     // cout<<"aa: "<<aa<<" bb: "<<bb<<" normal: "<<n<<endl;
+    cout<<"triangle with transform: "<<tf.matrix<<tf.inverse;
 }    
 
 Sphere::Sphere(istream& in, 
@@ -39,7 +41,7 @@ Sphere::Sphere(istream& in,
     
     in >> center >> radius;
 
-    cout<<"sphere with transform: "<<tf.matrix<<tf.inverse;
+    // cout<<"sphere with transform: "<<tf.matrix<<tf.inverse;
 }
 
 // get surface normals
@@ -90,11 +92,14 @@ bool Triangle::intersectWithRay(Ray ray, Arr3 &point) {
     float alpha = ((pp.dot(n_aa)) - (bb.dot(n_aa)) * beta) / aa.length();
 
     // cout<<endl;
-    // cout<<"transform of obj is "<<transform.inverse<<endl;
-    // cout<<"ray: "<<tfray.start<<" + t * "<<tfray.slope<<endl;
-    // cout<<"                 intersect plane at "<<p<<endl;
-    // cout<<"alpha beta: "<<alpha<<" "<<beta<<endl;
-    // cout<<"outp: "<<transform.matrix * Arr4(p, 0)<<endl;
+    
+    if (debug){
+        cout<<"tfray: "<<tfray.start<<" + t * "<<tfray.slope<<endl;
+        cout<<"intersect plane at "<<p<<endl;
+        cout<<"alpha beta: "<<alpha<<" "<<beta<<endl;
+        cout<<"point: "<<transform.matrix * Arr4(p, 1)<<endl;
+        // cout<<"point2: "<<ray.at(t)<<endl;
+    }
 
     // if (alpha < 0 || beta < 0 || alpha > 1 || beta > 1) 
         // return false;
@@ -102,7 +107,8 @@ bool Triangle::intersectWithRay(Ray ray, Arr3 &point) {
     if (alpha < 0 || beta < 0 || alpha > 1 || beta > 1 || alpha + beta > 1) 
         return false;
 
-    // cout<<"             intersect!!!\n";
+    if (debug) cout<<"             intersect!!!\n";
+
     point = transform.matrix * Arr4(p, 1);
     // point = ray.at(t);
     return true;
@@ -128,15 +134,15 @@ bool Sphere::intersectWithRay(Ray ray, Arr3 &point) {
 
     // only count the smallest positive intersection
     float t1 = (-b + sqrt(check)) / (2 * a),
-        t2 = (-b - sqrt(check)) / (2 * a);
+        t2 = (-b - sqrt(check)) / (2 * a), t;
     if (t1 < 0 && t2 < 0) return false;
-    if (t1 < 0) point = tfray.at(t2);
-    else if (t2 < 0) point = tfray.at(t1);
-    else point = tfray.at(min(t1, t2));
+    if (t1 < 0) t = t2;
+    else if (t2 < 0) t = t1;
+    else t = min(t1, t2);
 
     // cout<<"ray "<<ray<<" transformed "<<tfray<<endl;
     // cout<<"int point "<<point<<" transformed ";
-    point = transform.matrix * Arr4(point, 0);
+    point = transform.matrix * Arr4(tfray.at(t), 1);
     // cout<<point<<endl;
     return true;
 }

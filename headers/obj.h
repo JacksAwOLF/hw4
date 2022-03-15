@@ -9,6 +9,7 @@
 
 class Obj {
 public:
+    bool debug;
     ShadingVars shadingVars;
     Transform transform;
 

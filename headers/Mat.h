@@ -16,6 +16,8 @@ public:
     Arr4 operator*(const Arr4&);
     Mat4 operator*(const Mat4&);
 
+    Mat4 transpose();
+
     static Mat4 identity();
 };
 

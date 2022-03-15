@@ -14,11 +14,12 @@ public:
 
     Transform operator*(const Transform &o);
 
+    Arr3 multNormal(const Arr3&);
+
     static Transform identity();
     static Transform inScale(istream&);
     static Transform inTranslate(istream&);
-    // TODO!!!
-    // static Transform inRotate(istream&);
+    static Transform inRotate(istream&);
 };
 
 #endif

@@ -1,5 +1,7 @@
 #include "Mat.h"
 
+// constructor
+
 Mat4::Mat4(){
     *this = Mat4::identity();
 }
@@ -9,6 +11,8 @@ Mat4::Mat4(float* x){
         data.push_back(
             Arr4(x[i*4], x[i*4+1], x[i*4+2], x[i*4+3]));
 }
+
+// arithmetic operators
 
 Mat4 Mat4::operator+(const Mat4& o){
     float res[16];
@@ -45,6 +49,15 @@ Mat4 Mat4::operator*(const Mat4& o){
     return Mat4(res);
 }
 
+// other ops
+
+Mat4 Mat4::transpose(){
+    float res[16];
+    for (int i=0; i<16; i++)
+        res[i] = data[i%4][i/4];
+    return Mat4(res);
+}
+
 // static method to generate identity
 
 Mat4 Mat4::identity(){
@@ -56,6 +69,8 @@ Mat4 Mat4::identity(){
     };
     return Mat4(res);
 }
+
+// input/output
 
 ostream& operator<<(ostream& out, const Mat4& o){
     out<<endl;

@@ -18,7 +18,7 @@ camera -4 -4 4 1 0 0 0 1 0 30
 # for initial testing, you should get the geometry right
 # you may want to use dummy (constant) shading, ignoring these lines
 
-ambient .1 .1 .1
+ambient .1 .1 .9
 directional 0 0 1 .5 .5 .5
 point 4 0 4 .5 .5 .5
 diffuse 1 0 0
@@ -44,11 +44,4 @@ vertex +1 1 0
 vertex -1 +1 0
 
 tri 0 1 2
-tri 0 2 3
-
-popTransform
-pushTransform
-scale 0.5 0.5 1
-translate -0.5 -0.5 0
-diffuse 0 0 1
-sphere 0 0 0 1
+#tri 0 2 3

@@ -84,16 +84,12 @@ Scene readfile(const char* filename, int whichCam=1){
         // TODO!!! vertnorms and trinorms
 
         // specifying the transformations
-        else if (cmd == "translate") {
+        else if (cmd == "translate")
             tfStack.top() = Transform::inTranslate(ss) * tfStack.top();
-            // cout<<"translated\n"<<tfStack.top().matrix<<endl;
-        }
-        // else if (cmd == "rotate") 
-        //     curtf = curtf * Transform::inRotate(ss);
-        else if (cmd == "scale") {
+        else if (cmd == "rotate") 
+            tfStack.top() = Transform::inRotate(ss) * tfStack.top();
+        else if (cmd == "scale")
             tfStack.top() = Transform::inScale(ss) * tfStack.top();
-            // cout<<"scaled\n"<<tfStack.top().matrix<<endl;
-        }
         
         // push/pop Transform
         else if (cmd == "pushTransform"){

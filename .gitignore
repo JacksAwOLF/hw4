@@ -1,1 +1,4 @@
-*.o
+objfiles/*.o
+output/*.ppm
+testscenes/*.jpg
+run*
