@@ -3,8 +3,6 @@
 #include <sstream>
 #include <vector>
 #include "Scene.h"
-// #include "readfile.cpp"
-// #include "ppm.cpp"
 using namespace std;
 
 Scene readfile(const char* filename, int whichCam=1);
@@ -24,9 +22,11 @@ int main(int argc, char* argv[]){
 
     Scene scene = readfile(argv[1], whichCam);
 
-    cout<<"scene shit: "<<scene.screenTopLeft<<endl;
+    cout<<"sreentopleft: "<<scene.screenTopLeft<<endl;
 
     scene.render();
+
+    cout<<"done rendering\n";
 
     if (!ppmFromScene(argc>=3 ? argv[2] : "test.ppm", scene)){
         cerr<<"Error converting to PPM Image\n";

@@ -16,7 +16,7 @@ public:
 
     // returns t, where if positive, means that the Ray first intersects
     // this object at ray.a + ray.b * t
-    virtual float intersectWithRay(Ray);
+    virtual bool intersectWithRay(Ray, Arr3&);
 
     // returns surface normal at point of intersection
     virtual Arr3 surfaceNormal(Arr3 pointOfInt);
@@ -32,9 +32,9 @@ private:
 
 public:
     Triangle(istream&, vector<Arr3>&, ShadingVars, Transform);
-    
-    float intersectWithRay(Ray);
-    Arr3 surfaceNormal(Arr3 pointOfInt);
+
+    bool intersectWithRay(Ray, Arr3&);
+    Arr3 surfaceNormal(Arr3);
 };
 
 class Sphere: public Obj {
@@ -43,8 +43,9 @@ private:
     float radius;
 public:
     Sphere(istream&, ShadingVars, Transform);
-    float intersectWithRay(Ray);
-    Arr3 surfaceNormal(Arr3 pointOfInt);
+
+    bool intersectWithRay(Ray, Arr3&);
+    Arr3 surfaceNormal(Arr3);
 };
 
 #endif

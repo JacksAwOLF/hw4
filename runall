@@ -5,5 +5,5 @@
 ./run 2 1
 ./run 2 2
 ./run 2 3
-./run 3
+./run 3 1
 
