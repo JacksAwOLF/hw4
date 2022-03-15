@@ -4,8 +4,12 @@
 Scene::Scene(){
     debug = false;
     maxdepth = 5;
-    outfile = "test.ppm";
+    outfile = "test.png";
     attenuation = Arr3(1, 0, 0);
+}
+
+void Scene::setFile(string file){
+    outfile = file;
 }
 
 void Scene::setImage(istream& in){
@@ -32,7 +36,6 @@ void Scene::addLight(istream& in, bool dir){
 }
 
 Intersection Scene::firstObjHit(Ray ray){
-    // don't count 0s, better for shadow rays
     float t = 0;
     Obj *obj = nullptr;
     Arr3 point;
@@ -50,9 +53,9 @@ Intersection Scene::firstObjHit(Ray ray){
 
         float tt = ray.getT(pp);
 
-        if (debug) cout<<"found obj with int at "<<pp<<" time "<<tt<<endl;
+        // if (debug) cout<<"found obj with int at "<<pp<<" time "<<tt<<endl;
 
-        if (tt > 1e-6 && (t == 0 || tt < t)){
+        if (tt > TOLERANCE && (t == 0 || tt < t)){
 
             // count++;
             // if (count > 1){
@@ -64,7 +67,7 @@ Intersection Scene::firstObjHit(Ray ray){
             obj = objs[i];
             point = pp;
 
-            if (debug) cout<<"update "<<t<<": "<<point<<endl;
+            // if (debug) cout<<"update "<<t<<": "<<point<<endl;
         }
     }
     
@@ -85,7 +88,7 @@ void Scene::render(){
     //     curPos = curPos + pixelSize.pixelW;
     // }
 
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (long k=0; k<imageW*imageH; k++){
         int i = k / imageW;
         int j = k % imageW;
@@ -93,13 +96,37 @@ void Scene::render(){
         // find first obj this ray hits
         Ray ray(cam.eye, screenTopLeft + pixelSize.pixelH * i 
             + pixelSize.pixelW * j + pixelSize.pixelMid, true);
+
+        // cout<<"hit1\n";
         Intersection hit = firstObjHit(ray);
 
         if (hit.obj != nullptr) {
 
+            // image[i][j] = hit.pos.normalize();
+            
+            // #pragma omp critical
+            // image[i][j] = (hit.obj->surfaceNormal(hit.pos) 
+            //     + Arr3(1,1,1)).minmaxnorm();
+
+            // cerr<<i<<" "<<j<<": "<<(hit.obj->surfaceNormal(hit.pos))<<endl;
+            // // #pragma omp critical
+            // // {
+            // //     cout<<i<<" "<<j<<": first hit "<<hit.pos<<" with ray "<<ray<<endl;
+            // //     //"... nor: "<<image[i][j]<<endl;
+            // //     // cout<<"second hit "<<hit2.pos<<" with ray "<<ltRay<<endl;
+            // //     // cout<<"tt: "<<ltRay.getT(hit2.pos)<<endl<<endl;
+            // //     // debug = true;
+            // //     // firstObjHit(ltRay);
+            // //     // debug = false;
+            // // }
+
+
+            // continue;
+
             // cout<<k<<" hit1 sth\n";
 
             // material color
+            // #pragma omp critical
             image[i][j] = hit.obj->shadingVars.ambience +
                 hit.obj->shadingVars.emission;
 
@@ -109,25 +136,64 @@ void Scene::render(){
             for (Light light : lights){
                 // cout<<"lt1\n";
 
-                Ray ltRay(hit.pos, light.position, true);
+                Ray ltRay(hit.pos, light.position, !light.directional);
+
+                // epsilon shift for shadow ray
+                // ltRay.slope = ltRay.slope.normalize();
+                // ltRay.start = ltRay.at(TOLERANCE);
+
+                // cout<<"hit2\n";
                 Intersection hit2 = firstObjHit(ltRay);
                 // cout<<"lt2\n";
-                if (hit2.obj == nullptr) {
+
+                bool toShade = // true;
+                    hit2.obj == nullptr || 
+                    (!light.directional && 
+                        (hit2.pos-hit.pos).length() > (light.position-hit.pos).length());
+
+                if (toShade){
                     // cout<<"lt2.5\n";
+                    // #pragma omp critical
                     image[i][j] = image[i][j] + light.shade(hit, cam.eye);
                     // cout<<"lt2.8\n";
                 }
 
                 else {
-                    cout<<"first intersection at "<<hit.pos<<" with ray "<<ray<<endl; 
-                    cout<<"ltray: "<<ltRay<<endl<<"hit point ";
-                    cout<<hit2.pos<<" t: "<<ltRay.getT(hit2.pos)<<endl;
-                    debug = true;
-                    firstObjHit(ltRay);
-                    debug = false;
+                    
+                    // #pragma omp critical
+                    // {
+                    //     cout<<endl<<"first hit "<<hit.pos<<" with ray "<<ray<<endl;
+                    //     if (hit2.obj != nullptr)
+                    //         cout<<"second hit "<<hit2.pos<<" with ray "<<ltRay<<endl;
+                    //     cout<<"tt: "<<ltRay.getT(hit2.pos)<<endl;
+                    //     debug = true;
+                    //     firstObjHit(ltRay);
+                    //     debug = false;
+                    // }
+
                 }
                 // cout<<"lt3\n";
+
+
+                // if (i == 10 && j == 8){
+                //     cout<<"first intersection at "<<hit.pos<<" with ray "<<ray<<endl; 
+                //     cout<<"ltray: "<<ltRay<<endl<<"hit point ";
+                //     cout<<hit2.pos<<" t: "<<ltRay.getT(hit2.pos)<<endl;
+                //     cout<<"image at this point "<<image[i][j]<<endl;
+                // }
             }
+
+            // if ((image[i][j] - Arr3(.1, .1, .9)).length() <= 0.3){
+            //     cout<<i<<" "<<j<<": "<<image[i][j]<<endl;
+            //     // cout<<"color "<<image[i][j]<<endl;
+            //     // cout<<"first hit "<<hit.pos<<" with ray "<<ray<<endl;
+            // }
+
+            // cout<<image[i][j]<<endl;
+
+            image[i][j].between(0.0, 1.0);
+
+
         }
 
         // progress counter

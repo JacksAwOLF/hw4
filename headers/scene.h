@@ -15,7 +15,7 @@
 class Scene{
 public:
     bool debug;
-    
+
     int imageW, imageH;
     int maxdepth;
     Camera cam;
@@ -31,6 +31,8 @@ public:
 
     void setImage(istream&);
     void setCamera(istream&);
+    void setFile(string);
+    
     void addLight(istream&, bool);
 
     Intersection firstObjHit(Ray);

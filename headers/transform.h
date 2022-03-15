@@ -12,7 +12,7 @@ public:
     Transform(float* mat, float* inv);
     Transform(Mat4 mat, Mat4 inv);
 
-    Transform operator*(const Transform &o);
+    Transform operator*(Transform &o);
 
     Arr3 multNormal(const Arr3&);
 

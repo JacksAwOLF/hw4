@@ -5,7 +5,7 @@ HEAD = headers
 
 CC = g++
 CFLAGS = -std=c++11 -Wall
-INCFLAGS = -I $(HEAD) 
+INCFLAGS = -I $(HEAD) -I lodepng/
 LDFLAGS = 
 
 CPPFILES = $(foreach dir, $(SRC)/, $(notdir $(wildcard $(SRC)/*.cpp)))
@@ -13,7 +13,7 @@ CPP = $(addprefix $(SRC)/, $(CPPFILES))
 OBJFILES = $(addprefix $(OBJ)/, $(CPPFILES:.cpp=.o))
 HFILES = $(addprefix $(HEAD)/, $(CPPFILES:.cpp=.h))
 
-REMFILES = main.cpp ppm.cpp readfile.cpp
+REMFILES = main.cpp ppm.cpp readfile.cpp lodepng/lodepng.cpp
 
 # TODO: idk why this compiles all the time
 all: $(OBJFILES)

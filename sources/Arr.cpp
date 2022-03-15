@@ -63,6 +63,38 @@ Arr4::Arr4(Arr3 arr, float x){
 
 // common helping functions
 
+Arr Arr::negative(){
+    Arr res(size());
+    for (int i=0; i<size(); i++)
+        res[i] = -data[i];
+    return res;
+}
+
+Arr Arr::minmaxnorm(){
+    if (size()>1){
+        float mn=data[0], mx=data[0];
+        for (int i=0; i<size(); i++){
+            mn = min(mn, data[i]);
+            mx = max(mx, data[i]);
+        }
+        if (mn != mx){
+            for (int i=0; i<size(); i++)
+                data[i] = (data[i]-mn) / (mx-mn);
+        } else {
+            return between();
+        }
+    }
+    return *this;
+}
+
+Arr Arr::between(float small, float large){
+    for (int i=0; i<size(); i++){
+        if (data[i] < small) data[i] = small;
+        if (data[i] > large) data[i] = large;
+    }
+    return *this;
+}
+
 Arr Arr::copy(){
     Arr res(size());
     for (int i=0; i<size(); i++)
@@ -144,6 +176,12 @@ Arr Arr::operator*(const float &o){
     return res;
 }
 
+Arr Arr::mult(const float &o){
+    for (int i=0; i<size(); i++)
+        data[i] = data[i] * o;
+    return *this;
+}
+
 Arr Arr::operator/(const float &o){
     Arr res(size());
     for (int i=0; i<size(); i++)
@@ -169,10 +207,9 @@ Arr3 Arr3::cross(Arr3 o){
 }
 
 Arr Arr::round(){
-    Arr res(size());
     for (int i=0; i<size(); i++)
-        res[i] = std::round(data[i]);
-    return res;
+        data[i] = std::round(data[i]);
+    return *this;
 }
 
 // input/output
@@ -203,3 +240,8 @@ ostream& operator<<(ostream &os, const Arr3 &arr){
 ostream& operator<<(ostream& os, const Arr4& arr){
     return os << (Arr&) arr;
 }
+
+// int main(){
+//     Arr3 a(1, 2, 3);
+//     cout<<a.minmaxnorm()<<endl;
+// }

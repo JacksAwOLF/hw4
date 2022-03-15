@@ -6,7 +6,7 @@
 using namespace std;
 
 Scene readfile(const char* filename, int whichCam=1);
-bool ppmFromScene(const char* filename, Scene scene);
+bool ppmFromScene(Scene scene);
 
 int main(int argc, char* argv[]){
 
@@ -20,7 +20,9 @@ int main(int argc, char* argv[]){
         whichCam = (argv[3][0] - '0');
     }
 
+    string outfile = argc>=3 ? argv[2] : "test.png";
     Scene scene = readfile(argv[1], whichCam);
+    scene.setFile(outfile);
 
     cout<<"sreentopleft: "<<scene.screenTopLeft<<endl;
 
@@ -28,7 +30,8 @@ int main(int argc, char* argv[]){
 
     cout<<"done rendering\n";
 
-    if (!ppmFromScene(argc>=3 ? argv[2] : "test.ppm", scene)){
+
+    if (!ppmFromScene(scene)){
         cerr<<"Error converting to PPM Image\n";
         return -1;
     }

@@ -12,8 +12,8 @@ Arr3 Ray::at(float t){
 
 float Ray::getT(Arr3 point){
     Arr3 p = point - start;
-    // cout<<"GETT "<<point<<" , "<<p<<" , "<<p.length()<<endl;
-    // cout<<"return: "<<p.length() / slope.length()<<endl;
+    // cout<<point<<" - "<<start<<" = "<<p<<endl;
+    // cout<<p.length()<<" / "<<slope.length()<<endl;
     return p.length() / slope.length();
 }
 

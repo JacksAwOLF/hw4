@@ -6,6 +6,8 @@
 #include <cmath>
 using namespace std;
 
+#define TOLERANCE 1e-3
+
 class Arr{
 protected:
     vector<float> data;
@@ -24,6 +26,9 @@ public:
     float length();
 
     Arr copy();
+    Arr negative();
+    Arr between(float small=0.0, float large=1.0);
+    Arr minmaxnorm();
 
     // change this vector to length 1
     Arr normalize();
@@ -40,6 +45,8 @@ public:
     // ops with float
     Arr operator*(const float&);
     Arr operator/(const float&);
+    Arr mult(const float&);
+    
 
     // dot product
     float dot(const Arr&);

@@ -19,16 +19,16 @@ Transform::Transform(Mat4 mat, Mat4 inv){
 
 // multiply functions
 
-Transform Transform::operator*(const Transform &o){
+Transform Transform::operator*(Transform &o){
     return Transform(
         matrix * o.matrix,
-        inverse * o.inverse
+        o.inverse * inverse
     );
 }
 
 Arr3 Transform::multNormal(const Arr3& normalVec){
     // inverse transpose, in that order
-    return inverse.transpose() * Arr4(normalVec, 1);
+    return inverse.transpose() * Arr4(normalVec, 0);
 }
 
 // static transformations (and their inverses)

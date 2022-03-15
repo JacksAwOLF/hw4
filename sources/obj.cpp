@@ -33,7 +33,7 @@ Triangle::Triangle(istream& in, vector<Arr3>& vertices,
 
     // cout<<"triangle "<<a<<" , "<<b<<" , "<<c<<endl;
     // cout<<"aa: "<<aa<<" bb: "<<bb<<" normal: "<<n<<endl;
-    cout<<"triangle with transform: "<<tf.matrix<<tf.inverse;
+    // cout<<"triangle with transform: "<<tf.matrix<<tf.inverse;
 }    
 
 Sphere::Sphere(istream& in, 
@@ -42,16 +42,27 @@ Sphere::Sphere(istream& in,
     in >> center >> radius;
 
     // cout<<"sphere with transform: "<<tf.matrix<<tf.inverse;
+    // cout<<(Arr3)(tf.matrix * Arr4(center, 1))<<endl;
+    // cout<<(tf.matrix * tf.inverse)<<(tf.inverse * tf.matrix)<<endl;
+    // Ray r(Arr3(0,0,0), Arr3(0,0,1));
+    // cout<<r<<endl;
+    // cout<<r.transform(tf.inverse)<<endl;
+    // cout<<r.transform(tf.inverse).transform(tf.matrix)<<endl;
+    // cout<<r.transform(tf.inverse).transform(tf.matrix).transform(tf.inverse)<<endl;
 }
 
 // get surface normals
+// note: point is in world view,
+// we need to return normal in world view
 
 Arr3 Triangle::surfaceNormal(Arr3 point){
-    return n;
+    return transform.multNormal(n);
 }
 
 Arr3 Sphere::surfaceNormal(Arr3 point){
-    return point - center;
+    Arr3 tfPoint = transform.inverse * Arr4 (point, 1);
+    Arr3 modelN = tfPoint - center;
+    return transform.multNormal(modelN);
 }
 
 // intersections
@@ -75,7 +86,8 @@ bool Triangle::intersectWithRay(Ray ray, Arr3 &point) {
     float t = (a.dot(n) - tfray.start.dot(n)) / den;
     Arr3 p = tfray.at(t);
 
-    if (t == 0){ // dont count the shadow ray origin obj
+    // pBug
+    if (t < 0){ // dont count the shadow ray origin obj
         return false;
     }
 
@@ -93,13 +105,13 @@ bool Triangle::intersectWithRay(Ray ray, Arr3 &point) {
 
     // cout<<endl;
     
-    if (debug){
-        cout<<"tfray: "<<tfray.start<<" + t * "<<tfray.slope<<endl;
-        cout<<"intersect plane at "<<p<<endl;
-        cout<<"alpha beta: "<<alpha<<" "<<beta<<endl;
-        cout<<"point: "<<transform.matrix * Arr4(p, 1)<<endl;
-        // cout<<"point2: "<<ray.at(t)<<endl;
-    }
+    // if (debug){
+    //     cout<<"tfray: "<<tfray.start<<" + t * "<<tfray.slope<<endl;
+    //     cout<<"intersect plane at "<<p<<endl;
+    //     cout<<"alpha beta: "<<alpha<<" "<<beta<<endl;
+    //     cout<<"point: "<<transform.matrix * Arr4(p, 1)<<endl;
+    //     // cout<<"point2: "<<ray.at(t)<<endl;
+    // }
 
     // if (alpha < 0 || beta < 0 || alpha > 1 || beta > 1) 
         // return false;
@@ -107,7 +119,7 @@ bool Triangle::intersectWithRay(Ray ray, Arr3 &point) {
     if (alpha < 0 || beta < 0 || alpha > 1 || beta > 1 || alpha + beta > 1) 
         return false;
 
-    if (debug) cout<<"             intersect!!!\n";
+    // if (debug) cout<<"             intersect!!!\n";
 
     point = transform.matrix * Arr4(p, 1);
     // point = ray.at(t);
@@ -140,10 +152,14 @@ bool Sphere::intersectWithRay(Ray ray, Arr3 &point) {
     else if (t2 < 0) t = t1;
     else t = min(t1, t2);
 
+    // cout<<"point1 "<< transform.matrix * Arr4(tfray.at(t1), 1)
+    //     <<" point2 "<<transform.matrix * Arr4(tfray.at(t2), 1)<<endl;
+
+    point = tfray.at(t);
     // cout<<"ray "<<ray<<" transformed "<<tfray<<endl;
-    // cout<<"int point "<<point<<" transformed ";
-    point = transform.matrix * Arr4(tfray.at(t), 1);
-    // cout<<point<<endl;
+    // cout<<"modelp1 "<<tfray.at(t1)<<" modelp2 "<<tfray.at(t2)<<endl;
+    point = transform.matrix * Arr4(point, 1);
+    
     return true;
 }
     

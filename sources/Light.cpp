@@ -8,12 +8,10 @@ Light::Light(istream &in, bool dir, Arr3 atten){
 
 Arr3 Light::shade(Intersection hit, Arr3 eye){
 
-    // cout<<"shade1\n";
-
     ShadingVars sVars = hit.obj->shadingVars;
     
     Arr3 normal = hit.obj->surfaceNormal(hit.pos).normalize(),
-        eyedir = (hit.pos - eye).normalize(),
+        eyedir = (eye - hit.pos).normalize(),
         direction = directional ? position.normalize() : 
             (position - hit.pos).normalize(),
         halfAngle = (direction + eyedir).normalize();
@@ -25,8 +23,14 @@ Arr3 Light::shade(Intersection hit, Arr3 eye){
     float r = (hit.pos - this->position).length(),
         atten = directional ? 1 : attenuation.dot(Arr3(1, r*r, r*r*r));
 
-    // cout<<"shading: return "<<(color / atten) * (lambert + phong)<<endl;
-    return (color / atten) * (lambert + phong);
+    Arr3 res = (color / atten) * (lambert + phong);
+    
+    // if (res.length() < 0.1){
+    //     cout<<"shading: return "<<res<<" lambert: ";
+    //     cout<<lambert<<" phong: "<<phong<<endl;
+    // }
+
+    return res.between(0.0, 1.0);
 }
 
 // float nDotL = dot(normal, direction)  ;         
