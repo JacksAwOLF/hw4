@@ -13,7 +13,7 @@ public:
     Arr3 attenuation;
 
     Light(istream&, bool dir, Arr3 atten);
-    Arr3 shade(Intersection hit, Arr3 eye);
+    Arr3 shade(Intersection hit, Arr3 eyedir, Arr3 normal);
 };
 
 #endif

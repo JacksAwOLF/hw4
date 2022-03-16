@@ -64,7 +64,7 @@ Scene readfile(const char* filename, int whichCam=1){
 
         // basic commands
         if (cmd == "size") scene.setImage(ss);
-        else if (cmd == "maxdepth") ss >> scene.maxdepth;
+        else if (cmd == "maxdepth") ss >> scene.maxDepth;
         else if (cmd == "output") ss >> scene.outfile;
         else if (cmd == "camera") {
             countCam += 1;

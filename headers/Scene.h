@@ -17,7 +17,7 @@ public:
     bool debug;
 
     int imageW, imageH;
-    int maxdepth;
+    int maxDepth;
     Camera cam;
     PixelSize pixelSize;
     Arr3 screenTopLeft, attenuation;
@@ -35,6 +35,7 @@ public:
     
     void addLight(istream&, bool);
 
+    Arr3 shootRay(Ray ray, int depth);
     Intersection firstObjHit(Ray);
     void render();
 };
