@@ -22,12 +22,11 @@ int main(int argc, char* argv[]){
 
     string outfile = argc>=3 ? argv[2] : "test.png";
     Scene scene = readfile(argv[1], whichCam);
+    
+    // to be commented?
     scene.setFile(outfile);
 
-    cout<<"sreentopleft: "<<scene.screenTopLeft<<endl;
-
     scene.render();
-
 
     if (!ppmFromScene(scene)){
         cerr<<"Error converting to PPM Image\n";

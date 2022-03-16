@@ -10,6 +10,7 @@ Obj::Obj(ShadingVars svars, Transform tf){
 }
 
 bool Obj::intersectWithRay(Ray r, Arr3 &point) {
+    // cout<<"y u call me?\n";
     return false;
 }
 
@@ -93,6 +94,7 @@ bool Triangle::intersectWithRay(Ray ray, Arr3 &point) {
 
     // pBug
     if (t < 0){ // dont count the shadow ray origin obj
+        // cout<<"intersect plane at "<<p<<endl;
         return false;
     }
 
@@ -109,11 +111,10 @@ bool Triangle::intersectWithRay(Ray ray, Arr3 &point) {
     // cout<<endl;
     
     // if (debug){
-    //     cout<<"tfray: "<<tfray.start<<" + t * "<<tfray.slope<<endl;
-    //     cout<<"intersect plane at "<<p<<endl;
-    //     cout<<"alpha beta: "<<alpha<<" "<<beta<<endl;
-    //     cout<<"point: "<<transform.matrix * Arr4(p, 1)<<endl;
-    //     // cout<<"point2: "<<ray.at(t)<<endl;
+        // cout<<"tfray: "<<tfray.start<<" + t * "<<tfray.slope<<endl;
+        // cout<<"intersect plane at "<<p<<endl;
+        // cout<<"alpha beta: "<<alpha<<" "<<beta<<endl;
+        // cout<<"point: "<<transform.matrix * Arr4(p, 1)<<endl;
     // }
 
     // if (alpha < 0 || beta < 0 || alpha > 1 || beta > 1) 

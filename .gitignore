@@ -1,4 +1,7 @@
-objfiles/*.o
-output/*.ppm
-testscenes/*.jpg
 run*
+output/*
+testscenes/*
+submit/*
+objfiles/*
+lodepng/*
+*.png

@@ -36,24 +36,27 @@ void Scene::addLight(istream& in, bool dir){
 }
 
 Intersection Scene::firstObjHit(Ray ray){
+    // cout<<"checking ray "<<ray<<endl;
+
     float t = 0;
     Obj *obj = nullptr;
     Arr3 point;
     // int count = 0;
     for (int i=0; i<objs.size(); i++){
-        // cout<<i<<" obj\n";
+        // cout<<"        checking "<<i<<" obj\n";
         Arr3 pp;
 
-        if (debug) objs[i]->debug = true;
+        // if (debug) objs[i]->debug = true;
         if (!objs[i]->intersectWithRay(ray, pp)){
-            if (debug) objs[i]->debug = false;
+            // if (debug) objs[i]->debug = false;
             continue;
         }
-        if (debug) objs[i]->debug = false;
+        // if (debug) objs[i]->debug = false;
 
         float tt = ray.getT(pp);
 
-        // if (debug) cout<<"found obj with int at "<<pp<<" time "<<tt<<endl;
+        //if (debug) 
+        // cout<<"--------found obj with int at "<<pp<<" time "<<tt<<endl;
 
         if (tt > TOLERANCE && (t == 0 || tt < t)){
 
@@ -108,7 +111,7 @@ void Scene::render(){
             // image[i][j] = (hit.obj->surfaceNormal(hit.pos) 
             //     + Arr3(1,1,1)).minmaxnorm();
 
-            // cerr<<i<<" "<<j<<": "<<(hit.obj->surfaceNormal(hit.pos))<<endl;
+            // cout<<i<<" "<<j<<": "<<(hit.obj->surfaceNormal(hit.pos))<<endl;
             // // #pragma omp critical
             // // {
             // //     cout<<i<<" "<<j<<": first hit "<<hit.pos<<" with ray "<<ray<<endl;
@@ -163,9 +166,9 @@ void Scene::render(){
                     
                     // #pragma omp critical
                     // {
-                    //     cout<<endl<<"first hit "<<hit.pos<<" with ray "<<ray<<endl;
-                    //     if (hit2.obj != nullptr)
-                    //         cout<<"second hit "<<hit2.pos<<" with ray "<<ltRay<<endl;
+                        // cout<<endl<<"first hit "<<hit.pos<<" with ray "<<ray<<endl;
+                        // if (hit2.obj != nullptr)
+                        //     cout<<"second hit "<<hit2.pos<<" with ray "<<ltRay<<endl;
                     //     cout<<"tt: "<<ltRay.getT(hit2.pos)<<endl;
                     //     debug = true;
                     //     firstObjHit(ltRay);
