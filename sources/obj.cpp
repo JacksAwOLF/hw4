@@ -43,7 +43,7 @@ Sphere::Sphere(istream& in,
 
     // cout<<"sphere with transform: "<<tf.matrix<<tf.inverse;
     // cout<<(Arr3)(tf.matrix * Arr4(center, 1))<<endl;
-    // cout<<(tf.matrix * tf.inverse)<<(tf.inverse * tf.matrix)<<endl;
+    // cout<<(tf.matrix.mult(tf.inverse))<<(tf.inverse.mult(tf.matrix))<<endl;
     // Ray r(Arr3(0,0,0), Arr3(0,0,1));
     // cout<<r<<endl;
     // cout<<r.transform(tf.inverse)<<endl;
@@ -154,10 +154,10 @@ bool Sphere::intersectWithRay(Ray ray, Arr3 &point) {
 
     // cout<<"point1 "<< transform.matrix * Arr4(tfray.at(t1), 1)
     //     <<" point2 "<<transform.matrix * Arr4(tfray.at(t2), 1)<<endl;
-
-    point = tfray.at(t);
     // cout<<"ray "<<ray<<" transformed "<<tfray<<endl;
     // cout<<"modelp1 "<<tfray.at(t1)<<" modelp2 "<<tfray.at(t2)<<endl;
+
+    point = tfray.at(t);
     point = transform.matrix * Arr4(point, 1);
     
     return true;

@@ -38,7 +38,8 @@ Arr4 Mat4::operator*(const Arr4& o){
     return Arr4(res[0], res[1], res[2], res[3]);
 }
 
-Mat4 Mat4::operator*(const Mat4& o){
+Mat4 Mat4::mult(Mat4 o){
+
     float res[16];
     for (int i=0; i<16; i++)
         res[i] = 0;
@@ -46,6 +47,9 @@ Mat4 Mat4::operator*(const Mat4& o){
         for (int j=0; j<4; j++)
             for (int k=0; k<4; k++)
                 res[i*4+j] += data[i][k] * o.data[k][j];
+    
+    // cout<<*this<<" times "<<o<<" is "<<Mat4(res)<<endl;
+
     return Mat4(res);
 }
 

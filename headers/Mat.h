@@ -14,7 +14,7 @@ public:
     Mat4 operator+(const Mat4&);
     Mat4 operator*(const float&);
     Arr4 operator*(const Arr4&);
-    Mat4 operator*(const Mat4&);
+    Mat4 mult(Mat4);
 
     Mat4 transpose();
 

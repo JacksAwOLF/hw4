@@ -60,6 +60,8 @@ Scene readfile(const char* filename, int whichCam=1){
         string cmd;
         ss >> cmd;
 
+        // cout<<"begin line: "<<cmd<<endl;
+
         // basic commands
         if (cmd == "size") scene.setImage(ss);
         else if (cmd == "maxdepth") ss >> scene.maxdepth;
@@ -84,12 +86,28 @@ Scene readfile(const char* filename, int whichCam=1){
         // TODO!!! vertnorms and trinorms
 
         // specifying the transformations
-        else if (cmd == "translate")
-            tfStack.top() = Transform::inTranslate(ss) * tfStack.top();
-        else if (cmd == "rotate") 
-            tfStack.top() = Transform::inRotate(ss) * tfStack.top();
-        else if (cmd == "scale")
-            tfStack.top() = Transform::inScale(ss) * tfStack.top();
+
+        // TODO: I thought i should multiply it the other way around?
+        // right side gets evaluated first right?
+        else if (cmd == "translate"){
+            Transform t = Transform::inTranslate(ss);
+            // cout<<"translate\n";
+            // tfStack.top() = Transform::inTranslate(ss) * tfStack.top();
+            tfStack.top() =  tfStack.top() * t;
+            // cout<<"translate done\n";
+        }
+        else if (cmd == "rotate") {
+            Transform t = Transform::inRotate(ss);
+            tfStack.top() = tfStack.top() * t;
+            // cout<<"rotation: "<<t.matrix<<"top of stack"<<tfStack.top().matrix<<endl;
+            // tfStack.top() = t * tfStack.top();
+            
+        }
+        else if (cmd == "scale"){
+            // tfStack.top() = Transform::inScale(ss) * tfStack.top();
+            Transform t = Transform::inScale(ss);
+            tfStack.top() = tfStack.top() * t;
+        }
         
         // push/pop Transform
         else if (cmd == "pushTransform"){
@@ -104,6 +122,7 @@ Scene readfile(const char* filename, int whichCam=1){
                 continue;
             }
             tfStack.pop();
+
             // cout<<"popped\n"<<tfStack.top().matrix<<endl;
             // cout<<"size "<<tfStack.size()<<endl;
         }
@@ -123,6 +142,8 @@ Scene readfile(const char* filename, int whichCam=1){
 
 
         else cerr<<"unrecognized command: "<<cmd<<endl;
+
+        // cout<<"end of line\n";
     }
 
 

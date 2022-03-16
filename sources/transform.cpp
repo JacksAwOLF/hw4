@@ -21,8 +21,8 @@ Transform::Transform(Mat4 mat, Mat4 inv){
 
 Transform Transform::operator*(Transform &o){
     return Transform(
-        matrix * o.matrix,
-        o.inverse * inverse
+        matrix.mult(o.matrix),
+        o.inverse.mult(inverse)
     );
 }
 
@@ -87,7 +87,7 @@ Transform Transform::inRotate(istream& in){
     };
 
     Mat4 T2(t2), TT2;
-    TT2 = T2 * T2;
+    TT2 = T2.mult(T2);
     Mat4 res = Mat4::identity() + 
         T2 * sin(angle) + TT2 * (1-cos(angle));
     
@@ -98,4 +98,5 @@ Transform Transform::inRotate(istream& in){
     }
 
     return Transform(res.transpose(), res);
+    // return Transform(res, res.transpose());
 }
