@@ -28,8 +28,6 @@ int main(int argc, char* argv[]){
 
     scene.render();
 
-    cout<<"done rendering\n";
-
 
     if (!ppmFromScene(scene)){
         cerr<<"Error converting to PPM Image\n";

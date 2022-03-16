@@ -29,7 +29,8 @@ private:
 
     // aa.cross(bb) = normal vector to plane
     Arr3 aa, bb, n; 
-    // TODO: could save more vars here in intersection calculation
+    Arr3 n_aa, aap;
+    float bbDotaap, bbDotn_aa;
 
 public:
     Triangle(istream&, vector<Arr3>&, ShadingVars, Transform);

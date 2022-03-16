@@ -76,7 +76,7 @@ Intersection Scene::firstObjHit(Ray ray){
 
 void Scene::render(){
     
-    long count = 0, counttill = 1000;
+    long count = 0, counttill = 100;
     
     // preprocess all the rays
     // vector<Ray> rays;
@@ -88,14 +88,14 @@ void Scene::render(){
     //     curPos = curPos + pixelSize.pixelW;
     // }
 
-    //#pragma omp parallel for
+    #pragma omp parallel for
     for (long k=0; k<imageW*imageH; k++){
         int i = k / imageW;
         int j = k % imageW;
 
         // find first obj this ray hits
-        Ray ray(cam.eye, screenTopLeft + pixelSize.pixelH * i 
-            + pixelSize.pixelW * j + pixelSize.pixelMid, true);
+        Ray ray(cam.eye, screenTopLeft + (pixelSize.pixelH*(i)) + 
+            (pixelSize.pixelW*(j)) + (pixelSize.pixelMid), true);
 
         // cout<<"hit1\n";
         Intersection hit = firstObjHit(ray);
@@ -127,8 +127,8 @@ void Scene::render(){
 
             // material color
             // #pragma omp critical
-            image[i][j] = hit.obj->shadingVars.ambience +
-                hit.obj->shadingVars.emission;
+            image[i][j].add(hit.obj->shadingVars.ambience + 
+                (hit.obj->shadingVars.emission));
 
             // cout<<k<<" hit2 sth\n";
 
@@ -149,12 +149,13 @@ void Scene::render(){
                 bool toShade = // true;
                     hit2.obj == nullptr || 
                     (!light.directional && 
-                        (hit2.pos-hit.pos).length() > (light.position-hit.pos).length());
+                        (hit2.pos-(hit.pos)).length() > 
+                        (light.position-(hit.pos)).length());
 
                 if (toShade){
                     // cout<<"lt2.5\n";
                     // #pragma omp critical
-                    image[i][j] = image[i][j] + light.shade(hit, cam.eye);
+                    image[i][j].add(light.shade(hit, cam.eye));
                     // cout<<"lt2.8\n";
                 }
 
@@ -199,7 +200,9 @@ void Scene::render(){
         // progress counter
         #pragma omp critical
         if (++count % counttill == 0)
-            cout<<"rendering "<<outfile<<": "<<count<<"/"<<(long long)imageW * imageH<<endl;
+            cout<<"\rRendering "<<outfile<<": "<<(float)count/imageW*100/imageH<<"%"<<flush;
         
     }
+
+    cout<<flush<<"\rRendering complete"<<flush<<endl;
 }

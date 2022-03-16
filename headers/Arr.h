@@ -40,12 +40,17 @@ public:
     Arr operator+(const Arr&);
     Arr operator-(const Arr&);
     Arr operator*(const Arr&);
+    Arr add(const Arr&);
+    Arr sub(const Arr&);
+    Arr mul(const Arr&);
+
     // float operator/(const Arr&);
 
     // ops with float
     Arr operator*(const float&);
     Arr operator/(const float&);
-    Arr mult(const float&);
+    Arr mul(const float&);
+    Arr div(const float&);
     
 
     // dot product

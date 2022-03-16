@@ -31,6 +31,11 @@ Triangle::Triangle(istream& in, vector<Arr3>& vertices,
     bb = b - c;
     n = aa.cross(bb).normalize();
 
+    n_aa = aa.normalize();
+    aap = aa.cross(n).normalize();
+    bbDotaap = bb.dot(aap);
+    bbDotn_aa = bb.dot(n_aa);
+
     // cout<<"triangle "<<a<<" , "<<b<<" , "<<c<<endl;
     // cout<<"aa: "<<aa<<" bb: "<<bb<<" normal: "<<n<<endl;
     // cout<<"triangle with transform: "<<tf.matrix<<tf.inverse;
@@ -94,14 +99,12 @@ bool Triangle::intersectWithRay(Ray ray, Arr3 &point) {
     // check if point pp is in triangle
     // if it is within, then there exists alpha and beta
     // such that 0 <= alpha, beta <= 1 && alpha + beta <= 1
-    Arr3 pp = p - c, 
-        n_aa = aa.normalize(),
-        aap = aa.cross(n).normalize();
+    Arr3 pp = p - c;
     
     // find bb and pp projection on aa'. the result of proj_pp / proj_bb is beta
     // find bb and pp projection on aa. alpha then is (proj_pp + proj_bb * beta) / |aa|
-    float beta = (pp.dot(aap)) / (bb.dot(aap));
-    float alpha = ((pp.dot(n_aa)) - (bb.dot(n_aa)) * beta) / aa.length();
+    float beta = pp.dot(aap) / bbDotaap;
+    float alpha = (pp.dot(n_aa) - bbDotn_aa * beta) / aa.length();
 
     // cout<<endl;
     
@@ -133,9 +136,10 @@ bool Sphere::intersectWithRay(Ray ray, Arr3 &point) {
     // Ray's equation: P = P0 + P1 * t
     // Sphere's equation: <P - U> dot <P - U> = r^2
     // combine to get quadratic formula with variable t
+    Arr3 delta = tfray.start - center;
     float a = tfray.slope.dot(tfray.slope),
-        b = (tfray.slope * (float)2).dot(tfray.start - center),
-        c = (tfray.start - center).dot(tfray.start - center) - radius * radius;
+        b = (tfray.slope * (float)2).dot(delta),
+        c = (delta).dot(delta) - radius * radius;
     
     // check roots: if none (b < 4ac), no intersect
     // if same roots (b = 4ac), ray is perpendicular
@@ -157,9 +161,7 @@ bool Sphere::intersectWithRay(Ray ray, Arr3 &point) {
     // cout<<"ray "<<ray<<" transformed "<<tfray<<endl;
     // cout<<"modelp1 "<<tfray.at(t1)<<" modelp2 "<<tfray.at(t2)<<endl;
 
-    point = tfray.at(t);
-    point = transform.matrix * Arr4(point, 1);
-    
+    point = transform.matrix * Arr4(tfray.at(t), 1);
     return true;
 }
     

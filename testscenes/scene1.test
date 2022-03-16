@@ -2,8 +2,8 @@
 # A simple quad viewed from different camera positions
 
 #size 640 480
-#size 160 120
-size 64 48
+size 160 120
+#size 64 48
 #size 16 12
 #size 4 3
 

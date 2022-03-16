@@ -167,6 +167,22 @@ Arr Arr::operator*(const Arr &o){
     return res;
 }
 
+Arr Arr::add(const Arr& o){
+    for (int i=0; i<size(); i++)
+        data[i] += o[i];
+    return *this;
+}
+Arr Arr::sub(const Arr& o){
+    for (int i=0; i<size(); i++)
+        data[i] -= o[i];
+    return *this;
+}
+Arr Arr::mul(const Arr& o){
+    for (int i=0; i<size(); i++)
+        data[i] *= o[i];
+    return *this;
+}
+
 // scaling with a scalar
 
 Arr Arr::operator*(const float &o){
@@ -176,9 +192,15 @@ Arr Arr::operator*(const float &o){
     return res;
 }
 
-Arr Arr::mult(const float &o){
+Arr Arr::mul(const float &o){
     for (int i=0; i<size(); i++)
-        data[i] = data[i] * o;
+        data[i] *= o;
+    return *this;
+}
+
+Arr Arr::div(const float &o){
+    for (int i=0; i<size(); i++)
+        data[i] /= o;
     return *this;
 }
 

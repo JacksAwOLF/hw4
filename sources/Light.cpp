@@ -11,16 +11,16 @@ Arr3 Light::shade(Intersection hit, Arr3 eye){
     ShadingVars sVars = hit.obj->shadingVars;
     
     Arr3 normal = hit.obj->surfaceNormal(hit.pos).normalize(),
-        eyedir = (eye - hit.pos).normalize(),
+        eyedir = (eye - (hit.pos)).normalize(),
         direction = directional ? position.normalize() : 
-            (position - hit.pos).normalize(),
-        halfAngle = (direction + eyedir).normalize();
+            (position - (hit.pos)).normalize(),
+        halfAngle = (direction + (eyedir)).normalize();
     
     Arr3 lambert = sVars.diffuse * max((float)0.0, normal.dot(direction));
     Arr3 phong = sVars.specular * 
         pow(max((float)0.0, normal.dot(halfAngle)), sVars.shininess);
 
-    float r = (hit.pos - this->position).length(),
+    float r = (hit.pos - (this->position)).length(),
         atten = directional ? 1 : attenuation.dot(Arr3(1, r*r, r*r*r));
 
     Arr3 res = (color / atten) * (lambert + phong);

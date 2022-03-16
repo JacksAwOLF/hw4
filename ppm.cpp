@@ -11,7 +11,7 @@ bool ppmFromScene(Scene scene) {
     vector<unsigned char> img;
     for (int i=0; i<scene.imageH; i++)
         for (int j=0; j<scene.imageW; j++){
-            (scene.image[i][j].mult(255)).round();
+            scene.image[i][j].mul(255).round();
             for (int k=0; k<3; k++)
                 img.push_back(scene.image[i][j][k]);
             img.push_back(255);
