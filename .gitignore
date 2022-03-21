@@ -4,5 +4,12 @@
 *.ppm
 *.out
 /lodepng/
-submit/
-objfiles/*
+/objfiles/
+/output/
+/submit/
+/testscenes/
+/callgrind.out.*
+profiler
+/run*
+view
+
