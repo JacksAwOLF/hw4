@@ -12,4 +12,8 @@
 profiler
 /run*
 view
-
+out
+test.cpp
+a.out
+.DS_Store
+/.vscode/
