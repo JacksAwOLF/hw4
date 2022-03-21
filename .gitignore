@@ -11,7 +11,7 @@
 /callgrind.out.*
 profiler
 /run*
-view
+view*
 out
 test.cpp
 a.out

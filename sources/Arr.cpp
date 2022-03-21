@@ -19,11 +19,13 @@ Arr::Arr(const Arr& o){
 }
 
 Arr::Arr(int size){
+    data.reserve(size);
     for (int i=0; i<size; i++)
         data.push_back(0);
 }
 
 Arr::Arr(int size, istream& in){
+    data.reserve(size);
     for (int i=0; i<size; i++){
         float x; in>>x;
         data.push_back(x);
@@ -31,11 +33,13 @@ Arr::Arr(int size, istream& in){
 }
 
 Arr3::Arr3(Arr arr){
+    data.reserve(arr.size());
     for (int i=0; i<3; i++)
         data.push_back(arr[i]);
 }
 
 Arr4::Arr4(Arr arr){
+    data.reserve(arr.size());
     for (int i=0; i<4; i++)
         data.push_back(arr[i]);
 }
@@ -44,18 +48,21 @@ Arr3::Arr3(istream& is): Arr(3, is){}
 Arr4::Arr4(istream& is): Arr(4, is){}
 
 Arr3::Arr3(float a, float b, float c){
+    data.reserve(3);
     data.push_back(a);
     data.push_back(b);
     data.push_back(c);
 }
 
 Arr4::Arr4(float a, float b, float c, float d){
+    data.reserve(4);
     data.push_back(a);
     data.push_back(b);
     data.push_back(c);
     data.push_back(d);
 }
 Arr4::Arr4(Arr3 arr, float x){
+    data.reserve(4);
     for (int i=0; i<arr.size(); i++)
         data.push_back(arr[i]);
     data.push_back(x);

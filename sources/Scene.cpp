@@ -113,6 +113,8 @@ void Scene::render(){
     long count = 0, counttill = 1000;
     
     #pragma omp parallel for
+
+    // check pixel 8, 25 for scene 44 size /10.
     for (long k=0; k<imageW*imageH; k++){
         int i = k / imageW;
         int j = k % imageW;
@@ -125,9 +127,9 @@ void Scene::render(){
         // progress counter
         #pragma omp critical
         if (++count % counttill == 0)
-            cout<<"\rRendering "<<outfile<<": "<<(float)count/imageW*100/imageH<<"%"<<flush;
+            cout<<"    Rendering "<<outfile<<": "<<(float)count/imageW*100/imageH<<"%  \r"<<flush;
         
     }
 
-    cout<<flush<<"\rRendering complete"<<flush<<endl;
+    cout<<"Rendering "<<outfile<<" complete             \n";
 }

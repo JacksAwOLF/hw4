@@ -20,7 +20,7 @@ bool ppmFromScene(Scene scene) {
             // cout<<"got "<<a<<" for "<<i<<" "<<j<<endl;
         }
 
-    cout<<"writing to "<<scene.outfile<<endl;
+    // cout<<"writing to "<<scene.outfile<<endl;
     unsigned error = lodepng::encode(scene.outfile, img, scene.imageW, scene.imageH);
 
     if (error) cout<<"error: "<<lodepng_error_text(error)<<endl;
