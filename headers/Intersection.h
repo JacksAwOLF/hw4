@@ -8,9 +8,9 @@
 class Intersection{
 public:
     Obj* obj;
-    Arr3 pos;
+    Arr3 pos, nor;
     Intersection();
-    Intersection(Obj* obj, Arr3 pos);
+    Intersection(Obj* obj, Arr3 pos, Arr3 nor);
 };
 
 #endif

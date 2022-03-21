@@ -1,0 +1,8 @@
+*.png
+*.o
+*.test
+*.ppm
+*.out
+/lodepng/
+submit/
+objfiles/*

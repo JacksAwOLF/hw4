@@ -5,23 +5,21 @@
 Obj::Obj(ShadingVars svars, Transform tf){
     shadingVars = svars;
     transform = tf;
-    debug = false;
-    // cout<<"new obj with transform\n"<<tf.matrix<<" and inverse "<<tf.inverse<<endl;
 }
 
-bool Obj::intersectWithRay(Ray r, Arr3 &point) {
+bool Obj::intersectWithRay(Ray r, Arr3 &point, Arr3 &normal) {
     return false;
 }
 
 void Obj::updateBBox(){}
 
 bool Obj::touchBox(Ray ray){
-    return box.intersectRay(ray.transform(transform.inverse));
+    return box.intersectRay(ray);
 }
 
-Arr3 Obj::surfaceNormal(Arr3 point){
-    return Arr3();
-}
+// Arr3 Obj::surfaceNormal(Ray ray){
+//     return Arr3();
+// }
 
 Triangle::Triangle(istream& in, vector<Arr3>& vertices, 
     ShadingVars svars, Transform tf): Obj(svars, tf){
@@ -43,46 +41,31 @@ Triangle::Triangle(istream& in, vector<Arr3>& vertices,
     bbDotn_aa = bb.dot(n_aa);
 
     updateBBox();
-
-    // cout<<"triangle "<<a<<" , "<<b<<" , "<<c<<endl;
-    // cout<<"aa: "<<aa<<" bb: "<<bb<<" normal: "<<n<<endl;
-    // cout<<"triangle with transform: "<<tf.matrix<<tf.inverse;
 }    
 
 Sphere::Sphere(istream& in, 
     ShadingVars svars, Transform tf): Obj(svars, tf){
-    
     in >> center >> radius;
-
     updateBBox();
-
-    // cout<<"sphere with transform: "<<tf.matrix<<tf.inverse;
-    // cout<<(Arr3)(tf.matrix * Arr4(center, 1))<<endl;
-    // cout<<(tf.matrix.mult(tf.inverse))<<(tf.inverse.mult(tf.matrix))<<endl;
-    // Ray r(Arr3(0,0,0), Arr3(0,0,1));
-    // cout<<r<<endl;
-    // cout<<r.transform(tf.inverse)<<endl;
-    // cout<<r.transform(tf.inverse).transform(tf.matrix)<<endl;
-    // cout<<r.transform(tf.inverse).transform(tf.matrix).transform(tf.inverse)<<endl;
 }
 
 // get surface normals
 // note: point is in world view,
 // we need to return normal in world view
 
-Arr3 Triangle::surfaceNormal(Arr3 point){
-    return transform.multNormal(n);
-}
+// Arr3 Triangle::surfaceNormal(Arr3 point){
+//     return transform.multNormal(n);
+// }
 
-Arr3 Sphere::surfaceNormal(Arr3 point){
-    Arr3 tfPoint = transform.inverse * Arr4 (point, 1);
-    Arr3 modelN = tfPoint - center;
-    return transform.multNormal(modelN);
-}
+// Arr3 Sphere::surfaceNormal(Arr3 point){
+//     Arr3 tfPoint = transform.inverse * Arr4 (point, 1);
+//     Arr3 modelN = tfPoint - center;
+//     return transform.multNormal(modelN);
+// }
 
 // intersections
 
-bool Triangle::intersectWithRay(Ray ray, Arr3 &point) {
+bool Triangle::intersectWithRay(Ray ray, Arr3 &point, Arr3 &normal) {
 
     Ray tfray = ray.transform(transform.inverse);
     // Ray tfray = ray;
@@ -90,7 +73,6 @@ bool Triangle::intersectWithRay(Ray ray, Arr3 &point) {
     // if ray is normal to plane, no intersection
     float den = tfray.slope.dot(n);
     if (den == 0.0){
-        // cout<<"den is 0???\n";
         return false;
     }
 
@@ -101,8 +83,7 @@ bool Triangle::intersectWithRay(Ray ray, Arr3 &point) {
     float t = (a.dot(n) - tfray.start.dot(n)) / den;
     Arr3 p = tfray.at(t);
 
-    // pBug
-    if (t < 0){ // dont count the shadow ray origin obj
+    if (t < 0){ 
         return false;
     }
 
@@ -116,30 +97,17 @@ bool Triangle::intersectWithRay(Ray ray, Arr3 &point) {
     float beta = pp.dot(aap) / bbDotaap;
     float alpha = (pp.dot(n_aa) - bbDotn_aa * beta) / aa.length();
 
-    // cout<<endl;
-    
-    // if (debug){
-    //     cout<<"tfray: "<<tfray.start<<" + t * "<<tfray.slope<<endl;
-    //     cout<<"intersect plane at "<<p<<endl;
-    //     cout<<"alpha beta: "<<alpha<<" "<<beta<<endl;
-    //     cout<<"point: "<<transform.matrix * Arr4(p, 1)<<endl;
-    //     // cout<<"point2: "<<ray.at(t)<<endl;
-    // }
-
-    // if (alpha < 0 || beta < 0 || alpha > 1 || beta > 1) 
-        // return false;
-
     if (alpha < 0 || beta < 0 || alpha > 1 || beta > 1 || alpha + beta > 1) 
         return false;
 
-    // if (debug) cout<<"             intersect!!!\n";
-
+    // point and normal calculation
     point = transform.matrix * Arr4(p, 1);
-    // point = ray.at(t);
+    normal = (point - ray.start).dot(n) < 0 ? n : n.inverse();
+    normal = transform.multNormal(normal);
     return true;
 }  
 
-bool Sphere::intersectWithRay(Ray ray, Arr3 &point) {
+bool Sphere::intersectWithRay(Ray ray, Arr3 &point, Arr3 &normal) {
 
     Ray tfray = ray.transform(transform.inverse);
 
@@ -166,12 +134,9 @@ bool Sphere::intersectWithRay(Ray ray, Arr3 &point) {
     else if (t2 < 0) t = t1;
     else t = min(t1, t2);
 
-    // cout<<"point1 "<< transform.matrix * Arr4(tfray.at(t1), 1)
-    //     <<" point2 "<<transform.matrix * Arr4(tfray.at(t2), 1)<<endl;
-    // cout<<"ray "<<ray<<" transformed "<<tfray<<endl;
-    // cout<<"modelp1 "<<tfray.at(t1)<<" modelp2 "<<tfray.at(t2)<<endl;
-
-    point = transform.matrix * Arr4(tfray.at(t), 1);
+    Arr3 tfPoint = tfray.at(t);
+    normal = transform.multNormal(tfPoint - center);
+    point = transform.matrix * Arr4(tfPoint, 1);
     return true;
 }
 
@@ -180,7 +145,7 @@ void Triangle::updateBBox(){
         box.mins[i] = min(min(a[i], b[i]), c[i]);
         box.maxs[i] = max(max(a[i], b[i]), c[i]);
     }
-    // cout<<"my bounding box is "<<box.mins<<" and "<<box.maxs<<endl;
+    box.transform(transform.matrix);
 }
 
 void Sphere::updateBBox(){
@@ -188,4 +153,5 @@ void Sphere::updateBBox(){
         box.mins[i] = center[i] - radius;
         box.maxs[i] = center[i] + radius;
     }
+    box.transform(transform.matrix);
 }

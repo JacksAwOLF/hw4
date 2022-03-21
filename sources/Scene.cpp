@@ -38,46 +38,29 @@ void Scene::addLight(istream& in, bool dir){
 Intersection Scene::firstObjHit(Ray ray){
     float t = 0;
     Obj *obj = nullptr;
-    Arr3 point;
-    // int count = 0;
+    Arr3 point, normal;
     for (int i=0; i<objs.size(); i++){
-        // cout<<i<<" obj\n";
-        Arr3 pp;
-
-        // if (debug) objs[i]->debug = true;
+        Arr3 pp, nn;
 
         if (!objs[i]->touchBox(ray)){
             continue;
         }
 
-        if (!objs[i]->intersectWithRay(ray, pp)){
-            // if (debug) objs[i]->debug = false;
+        if (!objs[i]->intersectWithRay(ray, pp, nn)){
             continue;
         }
-        // if (debug) objs[i]->debug = false;
 
         float tt = ray.getT(pp);
 
-        // if (debug) 
-        // cout<<"found obj with int at "<<pp<<" time "<<tt<<endl;
-
         if (tt > TOLERANCE && (t == 0 || tt < t)){
-
-            // count++;
-            // if (count > 1){
-            //     // cout<<"hit at time "<<tt<<", position "<<pp<<endl;
-            //     // cout<<"compare with "<<t<<endl;
-            // }
-
             t = tt;
             obj = objs[i];
             point = pp;
-
-            // if (debug) cout<<"update "<<t<<": "<<point<<endl;
+            normal = nn;
         }
     }
     
-    return Intersection(obj, point);
+    return Intersection(obj, point, normal);
 }
 
 Arr3 Scene::shootRay(Ray ray, int depth){
@@ -95,7 +78,7 @@ Arr3 Scene::shootRay(Ray ray, int depth){
             (hit.obj->shadingVars.emission));
 
         // light shading color
-        Arr3 normal = hit.obj->surfaceNormal(hit.pos).normalize(),
+        Arr3 normal = hit.nor.normalize(),
             eyedir = (cam.eye - hit.pos).normalize();
 
         for (Light light : lights){
@@ -122,6 +105,8 @@ Arr3 Scene::shootRay(Ray ray, int depth){
 
     return res;
 }
+
+// TODO: change how loop through arrays work
 
 void Scene::render(){
     

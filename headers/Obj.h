@@ -19,10 +19,10 @@ public:
 
     // returns t, where if positive, means that the Ray first intersects
     // this object at ray.a + ray.b * t
-    virtual bool intersectWithRay(Ray, Arr3&);
+    virtual bool intersectWithRay(Ray, Arr3&, Arr3&);
 
     // returns surface normal at point of intersection
-    virtual Arr3 surfaceNormal(Arr3 pointOfInt);
+    // virtual Arr3 surfaceNormal(Arr3 pointOfInt);
     virtual void updateBBox();
     bool touchBox(Ray);
 };
@@ -39,8 +39,8 @@ private:
 public:
     Triangle(istream&, vector<Arr3>&, ShadingVars, Transform);
 
-    bool intersectWithRay(Ray, Arr3&);
-    Arr3 surfaceNormal(Arr3);
+    bool intersectWithRay(Ray, Arr3&, Arr3&);
+    // Arr3 surfaceNormal(Arr3);
     void updateBBox();
 };
 
@@ -51,8 +51,8 @@ private:
 public:
     Sphere(istream&, ShadingVars, Transform);
 
-    bool intersectWithRay(Ray, Arr3&);
-    Arr3 surfaceNormal(Arr3);
+    bool intersectWithRay(Ray, Arr3&, Arr3&);
+    // Arr3 surfaceNormal(Arr3);
     void updateBBox();
 };
 
