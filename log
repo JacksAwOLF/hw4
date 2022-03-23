@@ -1,0 +1,17 @@
+- O3 faster than g
+- 
+
+with virtual function
+    1: 9.262s
+    2: 21.796
+    44: 1m33.929s
+
+with 2 sep vectors Tris and Sphs
+    1: 8.597s
+    2: 25.141s
+    44: 1m35.569s
+
+with Arr3 default copy construct
+    1: 7.376s
+    2: 14.567s
+    44: 1m2.032s

@@ -16,7 +16,7 @@ protected:
 
 public:
     Arr();
-    Arr(const Arr&);
+    // Arr(const Arr&);
     Arr(int size);
     Arr(int size, istream&);
 

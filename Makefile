@@ -25,3 +25,6 @@ $(OBJ)/Light.o: $(HEAD)/Intersection.h
 # implicit rule
 $(OBJ)/%.o: $(SRC)/%.cpp
 	$(CC) -Xpreprocessor -fopenmp $(CFLAGS) $(INCFLAGS) -c $< -o $(OBJ)/$*.o
+
+clean:
+	rm -f objfiles/*.o

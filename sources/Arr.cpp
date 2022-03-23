@@ -5,18 +5,19 @@
 Arr::Arr(){}
 Arr3::Arr3(): Arr(3) {}
 Arr4::Arr4(): Arr(4) {}
-Arr::Arr(const Arr& o){
-    int n = size();
-    if (n == 0 && o.size() != 0){   
-        for (int i=0; i<o.size(); i++)
-            data.push_back(o[i]);
-    } else {
-        for (int i=0; i<n; i++)
-            data[i] = 0;
-        for (int i=0; i<n && i<o.size(); i++)
-            data[i] = o[i];
-    }
-}
+// Arr::Arr(const Arr& o){
+//     int n = size();
+//     if (n == 0 && o.size() != 0){
+//         data.reserve(o.size());
+//         for (int i=0; i<o.size(); i++)
+//             data.push_back(o[i]);
+//     } else {
+//         for (int i=0; i<n; i++)
+//             data[i] = 0;
+//         for (int i=0; i<n && i<o.size(); i++)
+//             data[i] = o[i];
+//     }
+// }
 
 Arr::Arr(int size){
     data.reserve(size);
